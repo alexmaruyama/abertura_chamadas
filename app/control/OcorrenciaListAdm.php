@@ -25,7 +25,7 @@ use Adianti\Widget\Form\TLabel;
 use Adianti\Wrapper\BootstrapDatagridWrapper;
 use Adianti\Wrapper\BootstrapFormBuilder;
 
-class OcorrenciaList extends TPage
+class OcorrenciaListAdm extends TPage
 {
     protected $form, $datagrid, $pageNavigation;
 
@@ -35,10 +35,6 @@ class OcorrenciaList extends TPage
     {
         parent::__construct();
 
-        $criteria = new TCriteria;
-        $criteria->add(new TFilter('system_user_id', '=', TSession::getValue('userid')));
-
-        $this->setCriteria($criteria);
         $this->setDatabase('banco');
         $this->setActiveRecord('Ocorrencia');
         $this->setLimit(5);
@@ -56,8 +52,6 @@ class OcorrenciaList extends TPage
         $this->form->setData(TSession::getValue(__CLASS__ . '_filter_data'));
 
         $this->form->addAction('Procurar', new TAction([$this, 'onSearch']), 'fa:search green');
-
-        $this->form->addAction('Cadastrar', new TAction(['OcorrenciaForm', 'onEdit']), 'fa:plus blue');
 
         $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
         $this->datagrid->style = 'width:100%;overflow-x:auto';
@@ -91,23 +85,9 @@ class OcorrenciaList extends TPage
         $this->datagrid->addColumn($col_flag);
         $this->datagrid->addColumn($col_data_fechamento);
 
-        $acao_acompanhar = new TDataGridAction([$this, 'onAcompanhar'], ['id' => '{id}']);
-        $acao_editar = new TDataGridAction(['OcorrenciaForm', 'onEdit'], ['id' => '{id}']);
+        $acao_editar = new TDataGridAction(['OcorrenciaFormAdm', 'onEdit'], ['id' => '{id}']);
         $acao_excluir = new TDataGridAction([$this, 'onDelete'], ['id' => '{id}']);
 
-        $acao_excluir->setDisplayCondition(function ($object) {
-            return $object->flag > 0 ? false : true;
-        });
-
-        $acao_editar->setDisplayCondition(function ($object) {
-            return $object->flag > 0 ? false : true;
-        });
-
-        $acao_acompanhar->setDisplayCondition(function ($object) {
-            return $object->flag > 0 ? true : false;
-        });
-
-        $this->datagrid->addAction($acao_acompanhar, 'Acompanhar', 'fa:search purple');
         $this->datagrid->addAction($acao_editar, 'Editar', 'fa:edit blue');
         $this->datagrid->addAction($acao_excluir, 'Excluir', 'fa:trash red');
 
@@ -123,26 +103,5 @@ class OcorrenciaList extends TPage
         $vbox->style = 'width:100%';
 
         parent::add($vbox);
-    }
-
-    public function onAcompanhar($param)
-    {
-        if (isset($param['id'])) {
-            try {
-                TTransaction::open('banco');
-                $ocorrencia = new Ocorrencia($param['id']);
-                $janela = TWindow::create('Acompanhamento da ocorrência', .5, .5);
-                $objeto = new TElement('div');
-                $objeto->style = 'overflow-x:auto;overflow-y:auto';
-                $ocorrencia->descricao_acompanhamento = str_replace("\n", '<br>', $ocorrencia->descricao_acompanhamento);
-                $objeto->add($ocorrencia->descricao_acompanhamento ?? 'Sem registros.');
-                $janela->add($objeto);
-                $janela->show();
-
-                TTransaction::close();
-            } catch (Exception $ex) {
-                new TMessage('error', $ex->getMessage());
-            }
-        }
     }
 }

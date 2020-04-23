@@ -99,6 +99,13 @@
       </menuitem>
     </menu>
   </menuitem>
+  <menuitem label="Gerenciar">
+    <menu>
+      <menuitem label="Ocorrência">
+        <action>OcorrenciaListAdm</action>
+      </menuitem>
+    </menu>
+  </menuitem>
   <menuitem label="Abertura">
     <menu>
       <menuitem label="Ocorrências">
