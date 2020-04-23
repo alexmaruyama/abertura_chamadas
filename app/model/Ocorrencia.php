@@ -18,5 +18,17 @@ class Ocorrencia extends TRecord
         parent::addAttribute('descricao');
         parent::addAttribute('problema_id');
         parent::addAttribute('system_user_id');
+        parent::addAttribute('flag');
+        parent::addAttribute('descricao_acompanhamento');
+    }
+
+    public function get_system_user()
+    {
+        return SystemUser::find($this->system_user_id);
+    }
+
+    public function get_problema()
+    {
+        return Problema::find($this->problema_id);
     }
 }

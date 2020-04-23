@@ -99,7 +99,14 @@
       </menuitem>
     </menu>
   </menuitem>
-  <menuitem label="Cadastros">
+  <menuitem label="Abertura">
+    <menu>
+      <menuitem label="Ocorrências">
+        <action>OcorrenciaList</action>
+      </menuitem>
+    </menu>
+  </menuitem>
+  <menuitem label="Tabelas">
     <menu>
       <menuitem label="Problema">
         <action>ProblemaList</action>
